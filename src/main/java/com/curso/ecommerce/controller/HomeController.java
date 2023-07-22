@@ -76,7 +76,13 @@ public class HomeController {
 		detalleOrden.setTotal(producto.getPrecio()*cantidad);
 		detalleOrden.setProducto(producto);
 		
-		detalles.add(detalleOrden);
+		//si la orden ya tiene un un producto, que se sume y no que se anada por segunda vez
+		Integer idProducto = producto.getId();
+		boolean ingresado = detalles.stream().anyMatch(p -> p.getProducto().getId() == idProducto);
+		
+		if(!ingresado) {
+			detalles.add(detalleOrden);
+		}
 		
 		//usamos una funcion lambda - funcion anonima.
 		sumaTotal = detalles.stream().mapToDouble(dt->dt.getTotal()).sum();
@@ -117,8 +123,12 @@ public class HomeController {
 	}
 	
 	
-	
-	
+	@GetMapping("/getCart")
+	public String getCart(Model model) {
+		model.addAttribute("cart", detalles);
+		model.addAttribute("orden", orden);
+		return "/usuario/carrito";
+	}
 	
 	
 	
